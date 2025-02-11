@@ -81,6 +81,7 @@ app.post('/api/login', async (req, res) => {
     console.log("username", username)
     console.log("password", password)
     console.log("token", token)
+    console.log("response.body", res.body)
   }
 
   try {

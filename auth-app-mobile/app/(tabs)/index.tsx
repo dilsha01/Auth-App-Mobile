@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           username: username,
           password: password,
           'login-form-type': 'pwd',
-          token: true,
+          'token': true,
         }),
       });
   
