@@ -71,10 +71,16 @@ app.post("/assert", (req, res) => {
 
 // Handle user login via IBM SAML API
 app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, token} = req.body;
 
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password are required' });
+
+  }
+  else{
+    console.log("username", username)
+    console.log("password", password)
+    console.log("token", token)
   }
 
   try {
@@ -87,12 +93,16 @@ app.post('/api/login', async (req, res) => {
         'username': username,
         'password': password,
         'login-form-type': 'pwd', // This may vary depending on IBM's API
-        'token': 'true',
+        'token': true,
       }),
+     
     });
+
+    console.log(`Response Status: ${response.status} ${response.statusText}`);
 
     if (!response.ok) {
       return res.status(response.status).json({ error: 'Authentication failed' });
+      console.log(response, "response")
     }
 
     const token = await response.text(); // IBM may return an HTML response or a token

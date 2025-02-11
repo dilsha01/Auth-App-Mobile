@@ -11,6 +11,7 @@ interface LoginScreenProps {
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -27,7 +28,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           username: username,
           password: password,
           'login-form-type': 'pwd',
-          'token': 'true',
+          token: true,
         }),
       });
   
