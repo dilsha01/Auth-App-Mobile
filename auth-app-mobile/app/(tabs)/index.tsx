@@ -20,7 +20,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   
     try {
       // Step 1: Send Login Request
-      const loginResponse = await fetch('http://localhost:5000/api/login', {
+      const loginResponse = await fetch('http://localhost:4000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -34,6 +34,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       if (!loginResponse.ok) {
         throw new Error('Invalid credentials');
         console.error('Failed to login');
+        //specific error
+
       }
   
       const loginData = await loginResponse.json();
