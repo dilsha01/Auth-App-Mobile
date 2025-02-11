@@ -20,18 +20,20 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   
     try {
       // Step 1: Send Login Request
-      const loginResponse = await fetch('https://www.myidp.ibm.com/api/login', {
+      const loginResponse = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: username,
           password: password,
           'login-form-type': 'pwd',
+          'token': 'true',
         }),
       });
   
       if (!loginResponse.ok) {
         throw new Error('Invalid credentials');
+        console.error('Failed to login');
       }
   
       const loginData = await loginResponse.json();
