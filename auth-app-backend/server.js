@@ -398,6 +398,39 @@ app.get("/api/auth/user", async (req, res) => {
   }
 });
 
+app.put("/api/auth/user", async (req, res) => {
+  try {
+    console.log("=== Step 04: Updating User Info ===");
+
+    if (!sessionCookies) {
+      
+      return res.status(400).json({ error: "Session cookies missing. Login required." });
+    }
+
+    const userData = req.body; // JSON payload from request
+
+    // Strip unnecessary attributes and send only key-value pairs for cookies
+    const formattedCookies = extractEssentialCookies(sessionCookies);
+    
+
+    const axiosConfig = {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Cookie: formattedCookies,
+      },
+      httpsAgent: agent, // Ensure HTTPS handling
+    };
+
+    const response = await axios.put("https://www.myidp.ibm.com/scim/Me", userData, axiosConfig);
+
+    
+    res.json(response.data);
+  } catch (error) {
+    console.error("Update User Error:", error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
+});
 
 
 
