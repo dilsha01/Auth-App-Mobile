@@ -373,7 +373,7 @@ app.get("/api/auth/user", async (req, res) => {
     console.log("=== Step 03: Fetching User Info ===");
 
     if (!sessionCookies) {
-      console.error("❌ Error: Session cookies missing.");
+     
       return res.status(400).json({ error: "Session cookies missing. Login required." });
     }
 
