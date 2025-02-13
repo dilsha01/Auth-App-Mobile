@@ -1,118 +1,124 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser'); // Add this line
-const cookieParser = require('cookie-parser'); // Ensure cookie-parser is also imported
-const fs = require('fs');
-const path = require('path');
-const saml2 = require('saml2-js');
+require("dotenv").config();
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+const https = require("https");
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Frontend origin
+const PORT = 4000;
 
-// Load certificates and keys from files
-const privateKeyPath = path.join(__dirname, "bin", "private_key.pem");
-const certificatePath = path.join(__dirname, "bin", "certificate.pem");
-const idpCertificatePath = path.join(__dirname, "bin", "idp_certificate.pem");
-
-const privateKey = fs.readFileSync(privateKeyPath, "utf-8");
-const certificate = fs.readFileSync(certificatePath, "utf-8");
-const idpCertificate = fs.readFileSync(idpCertificatePath, "utf-8");
-
-// IdP Configuration
-const idp = new saml2.IdentityProvider({
-  sso_login_url: "https://www.myidp.ibm.com/isam/sps/saml20idp/saml20/login",
-  sso_logout_url: "https://www.myidp.ibm.com/isam/sps/saml20idp/saml20/sloinitial?RequestBinding=HTTPRedirect",
-  certificates: [idpCertificate],
+// Ignore self-signed SSL certificate errors
+const agent = new https.Agent({
+  rejectUnauthorized: false,
 });
 
-// SP Configuration
-const sp = new saml2.ServiceProvider({
-  entity_id: "http://localhost:4000/metadata.xml",
-  private_key: privateKey,
-  certificate: certificate,
-  assert_endpoint: "http://localhost:4000/assert",
-  allow_unencrypted_assertion: true,
-});
+app.use(express.json());
+app.use(cors());
 
-// Serve SP Metadata
-app.get("/metadata.xml", (req, res) => {
-  res.type("application/xml");
-  res.send(sp.create_metadata());
-});
-
-// Assertion Consumer Service (ACS)
-app.post("/assert", (req, res) => {
-  console.log("Full SAML Response:", JSON.stringify(req.body, null, 2))
-  const options = { request_body: req.body };
-
-  sp.post_assert(idp, options, (err, saml_response) => {
-    if (err) {
-      console.error("Error processing SAML response:", err);
-      return res.status(500).send("Error processing SAML response");
-    }
-
-    console.log("SAML response received:", saml_response);
-
-    if (!saml_response.user) {
-      console.error("No user information found in SAML response");
-      return res.status(500).send("Invalid SAML response");
-    }
-
-    // Set user session or token
-    res.cookie("user", JSON.stringify(saml_response.user || {}), { httpOnly: true });
-
-    // Redirect to frontend dashboard
-    res.redirect("http://localhost:3000/dashboard");
-  });
-});
-
-// Handle user login via IBM SAML API
-app.post('/api/login', async (req, res) => {
-  const { username, password, token} = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required' });
-
-  }
-  else{
-    console.log("username", username)
-    console.log("password", password)
-    console.log("token", token)
-    console.log("response.body", res.body)
-  }
-
+// Step 01 - Get Authentication Cookie
+app.post("/api/auth/init", async (req, res) => {
   try {
-    const response = await fetch('https://www.myidp.ibm.com/isam/sps/saml20idp/saml20/login', {
-      method: 'POST',
+    const response = await axios.post(
+      "https://www.myidp.ibm.com/mga/sps/apiauthsvc/policy/password",
+      {},
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Cookie: process.env.AUTH_COOKIE,
+        },
+        httpsAgent: agent,
+      }
+    );
+
+    console.log("Init Response:", response.data);
+
+    // Extract `stateId` from the response's `location`
+    const stateId = response.data.location
+      ? new URL(response.data.location).searchParams.get("StateId")
+      : null;
+
+    if (!stateId) {
+      return res.status(400).json({ error: "StateId not found in response" });
+    }
+
+    res.json({ stateId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Step 02 - Authenticate User
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { username, password, stateId } = req.body;
+    
+    if (!stateId) {
+      return res.status(400).json({ error: "StateId is required" });
+    }
+
+    console.log("Login Request:", { username, password, stateId });
+
+    const response = await axios.put(
+      `https://www.myidp.ibm.com/mga/sps/apiauthsvc?StateId=${stateId}`,
+      { username, password }, // Use actual input, not hardcoded values
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Cookie: process.env.AUTH_COOKIE,
+        },
+        httpsAgent: agent,
+      }
+    );
+
+    console.log("Login Response Status:", response.status);
+
+    if (response.status === 204) {
+      res.json({ message: "Authentication successful" });
+    } else {
+      res.json(response.data);
+    }
+  } catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
+});
+
+
+// Step 03 - Fetch User Info
+// Step 03 - Fetch User Info
+// Step 03 - Fetch User Info
+app.get("/api/user/me", async (req, res) => {
+  try {
+    const authCookie = req.headers.cookie || process.env.AUTH_COOKIE;
+
+    if (!authCookie || !authCookie.includes("IV_JCT") || !authCookie.includes("JSESSIONID") || !authCookie.includes("PD-S-SESSION-ID")) {
+      return res.status(400).json({ error: "Invalid or missing authentication cookies" });
+    }
+
+    console.log("Fetching User Info - Headers:", { Cookie: authCookie });
+
+    const response = await axios.get("https://www.myidp.ibm.com/scim/Me", {
       headers: {
-        'Content-Type': 'application/json',
+        Cookie: authCookie,
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({
-        'username': username,
-        'password': password,
-        'login-form-type': 'pwd', // This may vary depending on IBM's API
-        'token': true,
-      }),
-     
+      httpsAgent: agent,
     });
 
-    console.log(`Response Status: ${response.status} ${response.statusText}`);
-
-    if (!response.ok) {
-      return res.status(response.status).json({ error: 'Authentication failed' });
-      console.log(response, "response")
-    }
-
-    const token = await response.text(); // IBM may return an HTML response or a token
-    res.json({ message: 'Login successful', token });
+    console.log("User Info Response:", response.data);
+    res.json(response.data);
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Failed to connect to IBM SAML API' });
+    console.error("User Info Fetch Error:", error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
   }
 });
 
 
-app.listen(4000, () => console.log('Proxy server running on port 4000'));
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
