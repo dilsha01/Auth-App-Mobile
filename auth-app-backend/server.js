@@ -393,6 +393,7 @@ app.get("/api/auth/user", async (req, res) => {
 
   
     res.json(response.data);
+    console.log("User Info Response:", response.data);
   } catch (error) {
     res.status(500).json({ error: error.response?.data || error.message });
   }
