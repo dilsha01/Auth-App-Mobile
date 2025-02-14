@@ -7,7 +7,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
 
   const handleSignIn = async () => {
-    const stateId = localStorage.getItem("stateId"); // Get stateId from localStorage
+    const stateId = localStorage.getItem("stateId");
     if (!stateId) {
       console.error("State ID is missing. Please log in first.");
       return;
@@ -25,40 +25,36 @@ const SignIn = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.cookies) {
-          localStorage.setItem("authCookies", data.cookies); // Store cookies in localStorage
+          localStorage.setItem("authCookies", data.cookies);
         }
   
-        // Retrieve stored cookies
         const authCookies = localStorage.getItem("authCookies");
         if (authCookies) {
-          // Make a second request with the stored cookies
           const userResponse = await fetch("http://localhost:4000/api/auth/user", {
             method: "GET",
             headers: {
-              "Cookie": authCookies, // Send cookies from localStorage
+              "Cookie": authCookies,
             },
           });
   
           if (userResponse.ok) {
-            console.log("User authenticated successfully.");
+            const userData = await userResponse.json();
+            localStorage.setItem("userInfo", JSON.stringify(userData)); // Store user info
             window.location.href = "/dashboard";
           } else {
             console.error("Failed to authenticate user.");
-            window.location.href = "/";
           }
         } else {
           console.error("No authentication cookies found.");
-          window.location.href = "/";
         }
       } else {
         console.error("Sign-in failed");
-        window.location.href = "/";
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
-      window.location.href = "/";
     }
   };
+  
   
 
 
