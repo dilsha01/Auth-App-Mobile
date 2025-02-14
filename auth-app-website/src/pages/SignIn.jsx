@@ -1,19 +1,32 @@
 import React, { useState } from "react";
 import { Container, Typography, Paper, TextField, Button, Box, AppBar, Toolbar } from "@mui/material";
 
+
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignIn = async () => {
+    const stateId = localStorage.getItem("stateId"); // Get stateId from localStorage
+    if (!stateId) {
+      console.error("State ID is missing. Please log in first.");
+      return;
+    }
     try {
-      const response = await fetch("http://localhost:4000/api/auth/signin", {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({ username, password, stateId })
       });
-      
+  
       if (response.ok) {
+        const data = await response.json();
+        if (data.cookies) {
+          localStorage.setItem("authCookies", data.cookies); // Store cookies in localStorage
+        }
         window.location.href = "/dashboard";
       } else {
         console.error("Sign-in failed");
@@ -22,6 +35,9 @@ const SignIn = () => {
       console.error("Error during sign-in:", error);
     }
   };
+  
+
+
 
   return (
     <>
