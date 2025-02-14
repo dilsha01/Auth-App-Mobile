@@ -19,7 +19,7 @@ const SignIn = () => {
           "Content-Type": "application/json",
           "Accept": "application/json",
         },
-        body: JSON.stringify({ username, password, stateId })
+        body: JSON.stringify({ username, password, stateId }),
       });
   
       if (response.ok) {
@@ -27,16 +27,39 @@ const SignIn = () => {
         if (data.cookies) {
           localStorage.setItem("authCookies", data.cookies); // Store cookies in localStorage
         }
-        window.location.href = "/dashboard";
+  
+        // Retrieve stored cookies
+        const authCookies = localStorage.getItem("authCookies");
+        if (authCookies) {
+          // Make a second request with the stored cookies
+          const userResponse = await fetch("http://localhost:4000/api/auth/user", {
+            method: "GET",
+            headers: {
+              "Cookie": authCookies, // Send cookies from localStorage
+            },
+          });
+  
+          if (userResponse.ok) {
+            console.log("User authenticated successfully.");
+            window.location.href = "/dashboard";
+          } else {
+            console.error("Failed to authenticate user.");
+            window.location.href = "/";
+          }
+        } else {
+          console.error("No authentication cookies found.");
+          window.location.href = "/";
+        }
       } else {
         console.error("Sign-in failed");
+        window.location.href = "/";
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
+      window.location.href = "/";
     }
   };
   
-
 
 
   return (
