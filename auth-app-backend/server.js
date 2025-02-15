@@ -250,6 +250,12 @@ require("dotenv").config();
 const app = express();
 const PORT = 4000;
 
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from the frontend
+  credentials: true, // Allow credentials (cookies, etc.)
+}));
+
+
 // Ignore self-signed SSL certificate errors (⚠️ Not recommended for production)
 const agent = new https.Agent({ rejectUnauthorized: false });
 
