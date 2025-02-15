@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import RedirectHandler from "./handler";
 import SignIn from "./pages/SignIn";
+import SignOut from "./pages/SignOut";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/assert" element={<RedirectHandler />} />
+        <Route path="/sign-out" element={<SignOut />} />
       </Routes>
     </Router>
   );
