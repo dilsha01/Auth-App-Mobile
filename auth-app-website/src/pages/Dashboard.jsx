@@ -126,6 +126,7 @@ const Dashboard = () => {
   
       if (response.ok) {
         console.log("User info updated successfully!");
+        window.location.href = "/sign-out";
       } else {
         const errorResponse = await response.json();
         console.error("Failed to update user info:", errorResponse);
@@ -135,6 +136,10 @@ const Dashboard = () => {
       console.error("Error during update:", error);
       alert("An unexpected error occurred. Please try again.");
     }
+  };
+
+  const handleCancel = () => {
+    window.location.href = "/sign-out"; // Navigates the user away without making changes
   };
   
 
@@ -162,9 +167,15 @@ const Dashboard = () => {
           <TextField fullWidth margin="normal" label="Department" name="department" value={userInfo.department} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Phone Number" name="phoneNumber" value={userInfo.phoneNumber} onChange={handleChange} /> */}
 
-          <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handleUpdate}>
-            Update Info
-          </Button>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button variant="contained" color="primary" sx={{ flex: 1, mr: 1 }} onClick={handleUpdate}>
+              Update Info
+            </Button>
+            <Button variant="contained" color="primary" sx={{ flex: 1, ml: 1 }} onClick={handleCancel}>
+              Cancel
+            </Button>
+          </Box>
+
         </Paper>
       </Container>
 
