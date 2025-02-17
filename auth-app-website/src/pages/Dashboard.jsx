@@ -11,6 +11,7 @@ const Dashboard = () => {
     organization: "",
     department: "",
     phoneNumber: "",
+    employeeCode: ""
   });
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const Dashboard = () => {
           organization: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.organization || "",
           department: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.department || "",
           phoneNumber: parsedData.phoneNumbers?.[0]?.value || "",
+          employeeCode: parsedData["urn:custom:attributes"]?.employeeCode || ""
         });
       } catch (error) {
         console.error("Error parsing user info from local storage:", error);
@@ -111,7 +113,8 @@ const Dashboard = () => {
         ...originalData,
         displayName: userInfo.displayName,
         userName: userInfo.userName,
-        title: userInfo.title
+        title: userInfo.title,
+        employeeCode: userInfo.employeeCode,
       };
   
       const response = await fetch("http://localhost:4000/api/auth/user", {
@@ -166,6 +169,7 @@ const Dashboard = () => {
           <TextField fullWidth margin="normal" label="Organization" name="organization" value={userInfo.organization} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Department" name="department" value={userInfo.department} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Phone Number" name="phoneNumber" value={userInfo.phoneNumber} onChange={handleChange} /> */}
+          <TextField fullWidth margin="normal" label="Employee Code" name="employeeCode" value={userInfo.employeeCode} onChange={handleChange} />
 
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Button variant="contained" color="primary" sx={{ flex: 1, mr: 1 }} onClick={handleUpdate}>
