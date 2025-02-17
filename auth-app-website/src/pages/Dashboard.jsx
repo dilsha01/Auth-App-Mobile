@@ -264,7 +264,7 @@ const Dashboard = () => {
             <Button variant="contained" color="primary" sx={{ flex: 1, mr: 1 }} onClick={handleUpdate}>
               Update Info
             </Button>
-            <Button variant="contained" color="secondary" sx={{ flex: 1, ml: 1 }} onClick={handleCancel}>
+            <Button variant="contained" color="primary" sx={{ flex: 1, ml: 1 }} onClick={handleCancel}>
               Cancel
             </Button>
           </Box>
