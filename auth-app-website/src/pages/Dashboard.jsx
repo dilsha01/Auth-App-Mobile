@@ -77,12 +77,15 @@ const Dashboard = () => {
       ...prevState,
       certificates: [...prevState.certificates, ""], // Add an empty string for a new input field
     }));
+    alert("Certificate added successfully!");
   };
   
   const handleRemoveCertificate = (index) => {
     setUserInfo((prevState) => {
       const updatedCertificates = prevState.certificates.filter((_, i) => i !== index);
+      alert("Certificate removed successfully!");
       return { ...prevState, certificates: updatedCertificates };
+     
     });
   };
   
@@ -183,6 +186,7 @@ const Dashboard = () => {
   
       if (response.ok) {
         console.log("User info updated successfully!");
+        alert("User info updated successfully!");
         window.location.href = "/sign-out";
       } else {
         const errorResponse = await response.json();
