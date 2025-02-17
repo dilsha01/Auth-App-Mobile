@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, TextField, Button, Paper, Typography, Box, AppBar, Toolbar } from "@mui/material";
+import { AppBar, Toolbar, Typography, Container, Paper, TextField, Button, Box, IconButton, Card, CardContent } from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [userInfo, setUserInfo] = useState({
@@ -209,49 +210,60 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="sm" sx={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+     {/* Main Content */}
+     <Container maxWidth="sm" sx={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3, maxWidth: "500px" }}>
           <Typography variant="h5" gutterBottom fontWeight="bold">
             Welcome, {userInfo.displayName || "User"}
           </Typography>
 
+          {/* User Information Fields */}
           <TextField fullWidth margin="normal" label="Display Name" name="displayName" value={userInfo.displayName} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Username" name="userName" value={userInfo.userName} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Title" name="title" value={userInfo.title} onChange={handleChange} />
-          {/* <TextField fullWidth margin="normal" label="Email" name="email" value={userInfo.email} onChange={handleChange} />
-          <TextField fullWidth margin="normal" label="Organization" name="organization" value={userInfo.organization} onChange={handleChange} />
-          <TextField fullWidth margin="normal" label="Department" name="department" value={userInfo.department} onChange={handleChange} />
-          <TextField fullWidth margin="normal" label="Phone Number" name="phoneNumber" value={userInfo.phoneNumber} onChange={handleChange} /> */}
           <TextField fullWidth margin="normal" label="Employee Code" name="employeeCode" value={userInfo.employeeCode} onChange={handleChange} />
 
-          <div>
-  <label>Certificates:</label>
-  {userInfo.certificates.map((cert, index) => (
-    <div key={index} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <input
-        type="text"
-        value={cert}
-        onChange={(e) => handleCertificateChange(index, e.target.value)}
-        placeholder={`Certificate ${index + 1}`}
-      />
-      <button type="button" onClick={() => handleRemoveCertificate(index)}>❌</button>
-    </div>
-  ))}
-  <button type="button" onClick={handleAddCertificate}>➕ Add Certificate</button>
-</div>
+          {/* Certificates Section */}
+          <Card variant="outlined" sx={{ mt: 2, p: 2, backgroundColor: "#f9f9f9", borderRadius: 2 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              Certificates
+            </Typography>
 
-          {/* <TextField fullWidth margin="normal" label="Employee Number" name="employeeNumber" value={userInfo.employeeNumber} onChange={handleChange} /> */}
+            {userInfo.certificates.map((cert, index) => (
+              <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label={`Certificate ${index + 1}`}
+                  value={cert}
+                  onChange={(e) => handleCertificateChange(index, e.target.value)}
+                />
+                <IconButton color="error" onClick={() => handleRemoveCertificate(index)}>
+                  <Delete />
+                </IconButton>
+              </Box>
+            ))}
 
+            {/* Add Certificate Button */}
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              sx={{ mt: 2, backgroundColor: "#041E42", "&:hover": { backgroundColor: "#032a64" } }}
+              onClick={handleAddCertificate}
+            >
+              Add Certificate
+            </Button>
+          </Card>
 
-          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          {/* Action Buttons */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
             <Button variant="contained" color="primary" sx={{ flex: 1, mr: 1 }} onClick={handleUpdate}>
               Update Info
             </Button>
-            <Button variant="contained" color="primary" sx={{ flex: 1, ml: 1 }} onClick={handleCancel}>
+            <Button variant="contained" color="secondary" sx={{ flex: 1, ml: 1 }} onClick={handleCancel}>
               Cancel
             </Button>
           </Box>
-
         </Paper>
       </Container>
 
