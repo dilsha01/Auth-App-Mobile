@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
-
 import { NavigationProp } from '@react-navigation/native';
 
 interface LoginScreenProps {
   navigation: NavigationProp<any>;
 }
 
-export default function LoginScreen({ navigation }: LoginScreenProps) {
+export default function LoginPage({ navigation }: LoginScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
 
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Error', 'Please enter email and password');
       return;
     }
-  
+
     try {
       // Step 1: Send Login Request
       const loginResponse = await fetch('http://localhost:4000/api/login', {
@@ -28,34 +26,33 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           username: username,
           password: password,
           'login-form-type': 'pwd',
-          'token': true,
         }),
       });
-  
+
       if (!loginResponse.ok) {
         throw new Error('Invalid credentials');
-        console.error('Failed to login');
-        //specific error
-
       }
-  
+
       const loginData = await loginResponse.json();
       const token = loginData.token; // Extract token
-  
+
       // Step 2: Fetch User Details from SCIM API
       const userResponse = await fetch('https://www.myidp.ibm.com/scim/Me', {
         method: 'GET',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
-  
+
       if (!userResponse.ok) {
         throw new Error('Failed to fetch user data');
       }
-  
+
       const userData = await userResponse.json();
       console.log('User Info:', userData);
-  
+
       Alert.alert('Success', 'Logged in successfully');
+      // You can now navigate to the main screen after login
+      navigation.navigate('Dashboard'); // Assuming 'Dashboard' is your next screen
+
     } catch (error) {
       console.error('Error:', error);
       if (error instanceof Error) {
@@ -65,7 +62,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       }
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -109,12 +105,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 10,
-    width: '40%',
+    width: '80%', // Adjusted width for better UX
     height: 40,
     fontSize: 14,
   },
   button: {
     marginTop: 10,
-    width: '40%',
+    width: '80%', // Adjusted width for better UX
   },
 });
