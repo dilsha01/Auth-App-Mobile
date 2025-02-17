@@ -30,7 +30,7 @@ const Dashboard = () => {
           department: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.department || "",
           phoneNumber: parsedData.phoneNumbers?.[0]?.value || "",
           employeeCode: parsedData["urn:custom:attributes"]?.employeeCode || "",
-          employeeNumber: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.employeeNumber || "",
+          employeeNumber: parsedData.employeeNumber || "",
         });
       } catch (error) {
         console.error("Error parsing user info from local storage:", error);
