@@ -12,8 +12,8 @@ const Dashboard = () => {
     department: "",
     phoneNumber: "",
     employeeCode: "",
+    certificates: [],
   });
-
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
@@ -29,16 +29,62 @@ const Dashboard = () => {
           department: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.department || "",
           phoneNumber: parsedData.phoneNumbers?.[0]?.value || "",
           employeeCode: parsedData["urn:custom:attributes"]?.employeeCode || "",
+          certificates: Array.isArray(parsedData["urn:custom:attributes"]?.certificates) 
+            ? parsedData["urn:custom:attributes"].certificates 
+            : [], // Ensure it's always an array
         });
       } catch (error) {
         console.error("Error parsing user info from local storage:", error);
       }
     }
   }, []);
+  
+  
+
+  // useEffect(() => {
+  //   const storedUserInfo = localStorage.getItem("userInfo");
+  //   if (storedUserInfo) {
+  //     try {
+  //       const parsedData = JSON.parse(storedUserInfo);
+  //       setUserInfo({
+  //         ...userInfo,
+  //         certificates: Array.isArray(parsedData["urn:custom:attributes"]?.certificates) 
+  //           ? parsedData["urn:custom:attributes"].certificates.join(", ") 
+  //           : "",
+  //       });
+  //     } catch (error) {
+  //       console.error("Error parsing user info from local storage:", error);
+  //     }
+  //   }
+  // }, []);
+  
 
   const handleChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
+
+  const handleCertificateChange = (index, value) => {
+    setUserInfo((prevState) => {
+      const updatedCertificates = [...prevState.certificates];
+      updatedCertificates[index] = value;
+      return { ...prevState, certificates: updatedCertificates };
+    });
+  };
+  
+  const handleAddCertificate = () => {
+    setUserInfo((prevState) => ({
+      ...prevState,
+      certificates: [...prevState.certificates, ""], // Add an empty string for a new input field
+    }));
+  };
+  
+  const handleRemoveCertificate = (index) => {
+    setUserInfo((prevState) => {
+      const updatedCertificates = prevState.certificates.filter((_, i) => i !== index);
+      return { ...prevState, certificates: updatedCertificates };
+    });
+  };
+  
 
   // const handleUpdate = async () => {
   //   try {
@@ -118,6 +164,7 @@ const Dashboard = () => {
         title: userInfo.title,
         "urn:custom:attributes": {
           employeeCode: userInfo.employeeCode,
+          certificates: userInfo.certificates,
         },
 
       
@@ -176,6 +223,23 @@ const Dashboard = () => {
           <TextField fullWidth margin="normal" label="Department" name="department" value={userInfo.department} onChange={handleChange} />
           <TextField fullWidth margin="normal" label="Phone Number" name="phoneNumber" value={userInfo.phoneNumber} onChange={handleChange} /> */}
           <TextField fullWidth margin="normal" label="Employee Code" name="employeeCode" value={userInfo.employeeCode} onChange={handleChange} />
+
+          <div>
+  <label>Certificates:</label>
+  {userInfo.certificates.map((cert, index) => (
+    <div key={index} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <input
+        type="text"
+        value={cert}
+        onChange={(e) => handleCertificateChange(index, e.target.value)}
+        placeholder={`Certificate ${index + 1}`}
+      />
+      <button type="button" onClick={() => handleRemoveCertificate(index)}>❌</button>
+    </div>
+  ))}
+  <button type="button" onClick={handleAddCertificate}>➕ Add Certificate</button>
+</div>
+
           {/* <TextField fullWidth margin="normal" label="Employee Number" name="employeeNumber" value={userInfo.employeeNumber} onChange={handleChange} /> */}
 
 
