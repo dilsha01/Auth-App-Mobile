@@ -12,7 +12,6 @@ const Dashboard = () => {
     department: "",
     phoneNumber: "",
     employeeCode: "",
-    employeeNumber: "",
   });
 
   useEffect(() => {
@@ -30,7 +29,6 @@ const Dashboard = () => {
           department: parsedData["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"]?.department || "",
           phoneNumber: parsedData.phoneNumbers?.[0]?.value || "",
           employeeCode: parsedData["urn:custom:attributes"]?.employeeCode || "",
-          employeeNumber: parsedData.employeeNumber || "",
         });
       } catch (error) {
         console.error("Error parsing user info from local storage:", error);
@@ -118,7 +116,6 @@ const Dashboard = () => {
         displayName: userInfo.displayName,
         userName: userInfo.userName,
         title: userInfo.title,
-        employeeNumber: userInfo.employeeCode,
         "urn:custom:attributes": {
           employeeCode: userInfo.employeeCode,
         },
