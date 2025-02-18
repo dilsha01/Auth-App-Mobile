@@ -145,9 +145,9 @@ const Dashboard = () => {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header>
-        <Appbar.Content title="User Dashboard" />
-      </Appbar.Header>
+      <Appbar.Header style={styles.header}>
+              <Appbar.Content title="User Dashboard" titleStyle={styles.headerTitle}></Appbar.Content>
+            </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content}>
         <Card style={styles.card}>
@@ -176,6 +176,13 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    backgroundColor: "#041E42",
+  },
+  headerTitle: {
+    color: "#FFFFFF", // Ensure title is visible
+    fontWeight: "bold",
   },
   button: {
     marginBottom: 10,
