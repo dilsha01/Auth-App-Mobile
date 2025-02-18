@@ -34,8 +34,10 @@ const Dashboard = () => {
             organization: parsedData.organization || "",
             department: parsedData.department || "",
             phoneNumber: parsedData.phoneNumbers?.[0]?.value || "",
-            employeeCode: parsedData.employeeCode || "",
-            certificates: Array.isArray(parsedData.certificates) ? parsedData.certificates : [],
+            employeeCode: parsedData["urn:custom:attributes"]?.employeeCode || "",
+          certificates: Array.isArray(parsedData["urn:custom:attributes"]?.certificates) 
+            ? parsedData["urn:custom:attributes"].certificates 
+            : [], 
           });
         }
       } catch (error) {
@@ -77,6 +79,8 @@ const Dashboard = () => {
             <TextInput label="Phone Number" value={userInfo.phoneNumber} onChangeText={(text) => handleChange("phoneNumber", text)} keyboardType="phone-pad" />
             <TextInput label="Organization" value={userInfo.organization} onChangeText={(text) => handleChange("organization", text)} />
             <TextInput label="Department" value={userInfo.department} onChangeText={(text) => handleChange("department", text)} />
+            <TextInput label="Employee Code" value={userInfo.employeeCode} onChangeText={(text) => handleChange("employeeCode", text)} />
+            <TextInput label="Certificates" value={userInfo.certificates.join(", ")} onChangeText={(text) => handleChange("certificates", text.split(","))} />
           </Card.Content>
           <Card.Actions>
             <Button mode="contained" onPress={handleUpdate}>Update</Button>
