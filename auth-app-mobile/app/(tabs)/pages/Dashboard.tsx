@@ -72,15 +72,15 @@ const Dashboard = () => {
         <Card style={styles.card}>
           <Card.Title title={`Welcome, ${userInfo.displayName || "User"}`} />
           <Card.Content>
-            <TextInput label="Display Name" value={userInfo.displayName} onChangeText={(text) => handleChange("displayName", text)} />
-            <TextInput label="Username" value={userInfo.userName} onChangeText={(text) => handleChange("userName", text)} />
-            <TextInput label="Title" value={userInfo.title} onChangeText={(text) => handleChange("title", text)} />
-            <TextInput label="Email" value={userInfo.email} onChangeText={(text) => handleChange("email", text)} keyboardType="email-address" />
-            <TextInput label="Phone Number" value={userInfo.phoneNumber} onChangeText={(text) => handleChange("phoneNumber", text)} keyboardType="phone-pad" />
-            <TextInput label="Organization" value={userInfo.organization} onChangeText={(text) => handleChange("organization", text)} />
-            <TextInput label="Department" value={userInfo.department} onChangeText={(text) => handleChange("department", text)} />
-            <TextInput label="Employee Code" value={userInfo.employeeCode} onChangeText={(text) => handleChange("employeeCode", text)} />
-            <TextInput label="Certificates" value={userInfo.certificates.join(", ")} onChangeText={(text) => handleChange("certificates", text.split(","))} />
+            <TextInput label="Display Name" value={userInfo.displayName} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]} onChangeText={(text) => handleChange("displayName", text)} />
+            <TextInput label="Username" value={userInfo.userName} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("userName", text)} />
+            <TextInput label="Title" value={userInfo.title} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("title", text)} />
+            <TextInput label="Email" value={userInfo.email} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("email", text)} keyboardType="email-address" />
+            <TextInput label="Phone Number" value={userInfo.phoneNumber} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("phoneNumber", text)} keyboardType="phone-pad" />
+            <TextInput label="Organization" value={userInfo.organization} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("organization", text)} />
+            <TextInput label="Department" value={userInfo.department} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]}  onChangeText={(text) => handleChange("department", text)} />
+            <TextInput label="Employee Code" value={userInfo.employeeCode} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]} onChangeText={(text) => handleChange("employeeCode", text)} />
+            <TextInput label="Certificates" value={userInfo.certificates.join(", ")} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]} onChangeText={(text) => handleChange("certificates", text.split(","))} />
           </Card.Content>
           <Card.Actions>
             <Button mode="contained" onPress={handleUpdate}>Update</Button>
@@ -96,13 +96,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  button: {
+    marginBottom: 10,
+  },
   content: {
     padding: 20,
     alignItems: "center",
   },
   card: {
-    width: "100%",
+    width: "75%",
     padding: 20,
+  },
+  input: {
+    marginBottom: 10,
   },
 });
 
