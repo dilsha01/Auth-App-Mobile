@@ -42,7 +42,7 @@ const LoginButton = () => {
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 8,
-        width: "50%",
+        width: "75%",
         alignSelf: "center",
       }}
     >
