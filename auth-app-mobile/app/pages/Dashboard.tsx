@@ -99,7 +99,7 @@ const Dashboard = () => {
           </Card.Content>
           <Card.Actions>
             <Button mode="contained" onPress={handleUpdate}>Update</Button>
-            <Button onPress={() => navigation.navigate("signout")}>Logout</Button>
+            <Button onPress={() => router.push("/signout")}>Logout</Button>
           </Card.Actions>
         </Card>
       </ScrollView>
