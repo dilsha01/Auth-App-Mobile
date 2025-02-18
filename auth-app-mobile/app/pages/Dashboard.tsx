@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, StyleSheet } from "react-native";
+import { View, ScrollView, Alert, StyleSheet, Platform } from "react-native";
 import { Appbar, TextInput, Button, Card, Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -49,14 +49,80 @@ const Dashboard = () => {
     fetchUserInfo();
   }, []);
 
-  const handleUpdate = async () => {
+  interface AuthCookies {
+    authCookies: string;
+  }
+
+  interface OriginalData {
+    displayName?: string;
+    userName?: string;
+    title?: string;
+    "urn:custom:attributes"?: {
+      employeeCode?: string;
+      certificates?: string[];
+    };
+  }
+
+  interface UpdatedUserInfo extends OriginalData {
+    displayName: string;
+    userName: string;
+    title: string;
+    "urn:custom:attributes": {
+      employeeCode: string;
+      certificates: string[];
+    };
+  }
+
+  const handleUpdate = async (): Promise<void> => {
     try {
-      await AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
-      Alert.alert("Success", "User info updated successfully!");
-      router.push("/signout") // Redirect to login or logout screen
+      const authCookies = await AsyncStorage.getItem("authCookies");
+      if (!authCookies) {
+        Alert.alert("Error", "You are not logged in. Please log in and try again.");
+        return;
+      }
+
+      const storedUserInfo = await AsyncStorage.getItem("userInfo");
+      const originalData: OriginalData = storedUserInfo ? JSON.parse(storedUserInfo) : {};
+      console.log("originalData", originalData);
+      console.log("userInfo", userInfo);
+
+      const updatedUserInfo: UpdatedUserInfo = {
+        ...originalData,
+        displayName: userInfo.displayName,
+        userName: userInfo.userName,
+        title: userInfo.title,
+        "urn:custom:attributes": {
+          employeeCode: userInfo.employeeCode,
+          certificates: userInfo.certificates,
+        },
+      };
+
+      const API_BASE_URL =
+        Platform.OS === "ios" || Platform.OS === "android"
+          ? "http://192.168.x.x:4000" // Replace with your local network IP
+          : "http://localhost:4000";
+
+      const response = await fetch(`${API_BASE_URL}/api/auth/user`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: authCookies, // Ensure all required cookies are included
+        },
+        body: JSON.stringify(updatedUserInfo),
+      });
+
+      if (response.ok) {
+        await AsyncStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+        Alert.alert("Success", "User info updated successfully!");
+        router.push("/signout"); // Redirect to logout screen
+      } else {
+        const errorResponse = await response.json();
+        console.error("Failed to update user info:", errorResponse);
+        Alert.alert("Update failed", errorResponse.detail || "Unknown error");
+      }
     } catch (error) {
-      console.error("Error updating user info:", error);
-      Alert.alert("Error", "Failed to update user info");
+      console.error("Error during update:", error);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
     }
   };
 
@@ -98,7 +164,7 @@ const Dashboard = () => {
             <TextInput label="Certificates" value={userInfo.certificates.join(", ")} style={[styles.input, styles.button, { width: "50%" , alignSelf: "center"}]} onChangeText={(text) => handleChange("certificates", text.split(","))} />
           </Card.Content>
           <Card.Actions>
-            <Button mode="contained" onPress={handleUpdate}>Update</Button>
+            <Button mode="contained" onPress={() => handleUpdate()}>Update</Button>
             <Button onPress={() => router.push("/signout")}>Logout</Button>
           </Card.Actions>
         </Card>
