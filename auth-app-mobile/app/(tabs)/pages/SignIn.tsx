@@ -76,7 +76,7 @@ const SignIn = () => {
               label="Username"
               value={username}
               onChangeText={setUsername}
-              style={styles.input}
+              style={[styles.input, styles.button, { width: "40%",alignSelf: "center"}]}
               mode="outlined"
             />
             <TextInput
@@ -84,10 +84,10 @@ const SignIn = () => {
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              style={styles.input}
+              style={[styles.input, styles.button, { width: "40%",alignSelf: "center"}]}
               mode="outlined"
             />
-            <Button mode="contained" onPress={handleSignIn} style={styles.button}>
+            <Button mode="contained" onPress={handleSignIn} style={[styles.button, { width: "25%" , alignSelf: "center"}]}>   
               Sign In
             </Button>
           </Card.Content>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#052F5F",
     borderRadius: 10,
-    width: "90%",
+    width: "50%",
     padding: 20,
   },
   title: {
