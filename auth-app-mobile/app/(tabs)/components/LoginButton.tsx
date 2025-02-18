@@ -33,11 +33,12 @@ const LoginButton = () => {
       mode="contained"
       onPress={handleLogin}
       style={{
-        fontSize: 16,
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 8,
         textTransform: "none",
+        width: "25%",
+        alignSelf: "center",
       }}
     >
       Click here to login
