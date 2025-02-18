@@ -1,14 +1,17 @@
 import React from "react";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
-import { BASE_URL } from '@env';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const LoginButton = () => {
   const router = useRouter();
+  const BASE_URL = "http://172.20.10.6:4000";
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(`{BASE_URL}/api/auth/init`, {
+      console.log("Initializing authentication...");
+      const response = await fetch(`${BASE_URL}/api/auth/init`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,7 +24,7 @@ const LoginButton = () => {
       }
 
       const data = await response.json();
-      localStorage.setItem("stateId", data.stateId); // Store stateId in localStorage
+      AsyncStorage.setItem("stateId", data.stateId); // Store stateId in localStorage
 
       // Navigate to sign-in screen
       router.push("/signin");
