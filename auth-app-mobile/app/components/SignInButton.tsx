@@ -3,9 +3,12 @@ import { Button } from "react-native-paper";
 import { Linking } from "react-native";
 
 const SignInButton = () => {
+  const BASE_URL = "http://172.20.10.6:4000";
+
   const handleSignIn = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/auth/signin", {
+      console.log("Signing in...");
+      const response = await fetch(`${BASE_URL}/api/auth/signin`, {
         method: "POST",
       });
 
