@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginButton = () => {
   const router = useRouter();
-  const BASE_URL = "http://172.20.10.6:4000";
+  const BASE_URL = "http://192.168.95.25:4000";
 
   const handleLogin = async () => {
     try {
@@ -42,12 +42,13 @@ const LoginButton = () => {
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 8,
-        width: "75%",
+        // width: "75%",
         alignSelf: "center",
       }}
     >
       Click here to login
     </Button>
+
   );
 };
 
