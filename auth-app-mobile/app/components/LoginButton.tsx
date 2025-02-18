@@ -1,13 +1,14 @@
 import React from "react";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { BASE_URL } from '@env';
 
 const LoginButton = () => {
   const router = useRouter();
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/auth/init", {
+      const response = await fetch(`{BASE_URL}/api/auth/init`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
