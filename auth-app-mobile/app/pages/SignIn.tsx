@@ -64,8 +64,8 @@ const SignIn = () => {
     <>
       {/* Header */}
       <Appbar.Header style={styles.header}>
-        <Appbar.Content title="IBM Security Verify Access" />
-      </Appbar.Header>
+              <Appbar.Content title="IBM Security Verify Access" titleStyle={styles.headerTitle} />
+            </Appbar.Header>
 
       {/* Main Content */}
       <View style={styles.container}>
@@ -107,6 +107,10 @@ const SignIn = () => {
 const styles = StyleSheet.create({
   header: {
     backgroundColor: "#041E42",
+  },
+  headerTitle: {
+    color: "#FFFFFF", // Ensure title is visible
+    fontWeight: "bold",
   },
   container: {
     flex: 1,
