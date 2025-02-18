@@ -145,7 +145,7 @@ const SignIn = () => {
               label="Username"
               value={username}
               onChangeText={setUsername}
-              style={[styles.input, styles.button, { width: "40%",alignSelf: "center"}]}
+              style={[styles.input, styles.button, { width: "70%",alignSelf: "center"}]}
               mode="outlined"
             />
             <TextInput
@@ -153,10 +153,10 @@ const SignIn = () => {
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              style={[styles.input, styles.button, { width: "40%",alignSelf: "center"}]}
+              style={[styles.input, styles.button, { width: "70%",alignSelf: "center"}]}
               mode="outlined"
             />
-            <Button mode="contained" onPress={handleSignIn} style={[styles.button, { width: "25%" , alignSelf: "center"}]}>   
+            <Button mode="contained" onPress={handleSignIn} style={[styles.button, { width: "50%" , alignSelf: "center"}]}>   
               Sign In
             </Button>
           </Card.Content>
