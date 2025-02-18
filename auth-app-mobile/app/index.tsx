@@ -6,8 +6,6 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <View>
       <HomePage />
-    </View>
   );
 }
