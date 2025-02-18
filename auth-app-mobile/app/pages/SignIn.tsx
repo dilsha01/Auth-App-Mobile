@@ -3,63 +3,130 @@ import { View, StyleSheet, Alert } from "react-native";
 import { Appbar, Card, TextInput, Button, Text } from "react-native-paper";
 //import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   //const navigation = useNavigation();
   const router = useRouter();
+  const BASE_URL = "http://172.20.10.6:4000";   
+
+  // const handleSignIn = async () => {
+  //   console.log("Signing in...");
+  //   const stateId =AsyncStorage.getItem("stateId");
+  //   if (!stateId) {
+  //     console.error("State ID is missing. Please log in first.");
+  //     return;
+  //   }
+  //   try {
+  //     console.log("Signing in.2..");
+  //     const response = await fetch(`${BASE_URL}/api/auth/login`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Accept": "application/json",
+  //       },
+  //       body: JSON.stringify({ username, password, stateId }),
+  //     });
+  //     console.log("Signing in.3..");
+  //     console.log("response", response);
+  //     if (response.ok || response.status === 200) {
+  //       console.log("Sign-in successful");
+  //       const data = await response.json();
+  //       if (data.cookies) {
+  //         AsyncStorage.setItem("authCookies", data.cookies);
+  //       }
+
+  //       const authCookies = await AsyncStorage.getItem("authCookies");
+  //       if (authCookies) {
+  //         console.log("Auth cookies:", authCookies);
+  //         const userResponse = await fetch(`${BASE_URL}/api/auth/user`, {
+  //           method: "GET",
+  //           headers: {
+  //             "Cookie": authCookies || "",
+  //           },
+  //         });
+
+  //         if (userResponse.ok) {
+  //           const userData = await userResponse.json();
+  //           AsyncStorage.setItem("userInfo", JSON.stringify(userData)); // Store user info
+  //           router.push("/dashboard"); // Redirect to Dashboard
+  //         } else {
+  //           console.error("Failed to authenticate user.");
+  //           // Call init if needed...
+  //         }
+  //       }
+  //     } else {
+  //       console.error("Sign-in failed");
+  //       // Call init if needed...
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during sign-in:", error);
+  //     // Call init if needed...
+  //   }
+  // };
 
   const handleSignIn = async () => {
-    const stateId = localStorage.getItem("stateId");
+    console.log("Signing in...");
+    
+    const stateId = await AsyncStorage.getItem("stateId"); // Await needed!
     if (!stateId) {
       console.error("State ID is missing. Please log in first.");
+      Alert.alert("Error", "State ID is missing. Please try again.");
       return;
     }
+  
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      console.log("Signing in.2..");
+      const requestBody = JSON.stringify({ username, password, stateId });
+      console.log("Request Body:", requestBody);
+  
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
         },
-        body: JSON.stringify({ username, password, stateId }),
+        body: requestBody,
       });
-
+  
+      console.log("Signing in.3..");
+      console.log("Response Status:", response.status);
+  
       if (response.ok) {
+        console.log("Sign-in successful");
         const data = await response.json();
+        
         if (data.cookies) {
-          localStorage.setItem("authCookies", data.cookies);
+          await AsyncStorage.setItem("authCookies", data.cookies);
         }
-
-        const authCookies = localStorage.getItem("authCookies");
+  
+        const authCookies = await AsyncStorage.getItem("authCookies");
         if (authCookies) {
-          const userResponse = await fetch("http://localhost:4000/api/auth/user", {
+          console.log("Auth cookies:", authCookies);
+          const userResponse = await fetch(`${BASE_URL}/api/auth/user`, {
             method: "GET",
-            headers: {
-              "Cookie": authCookies,
-            },
+            headers: { "Cookie": authCookies || "" },
           });
-
+  
           if (userResponse.ok) {
             const userData = await userResponse.json();
-            localStorage.setItem("userInfo", JSON.stringify(userData)); // Store user info
-            router.push("/dashboard"); // Redirect to Dashboard
+            await AsyncStorage.setItem("userInfo", JSON.stringify(userData));
+            router.push("/dashboard");
           } else {
             console.error("Failed to authenticate user.");
-            // Call init if needed...
           }
         }
       } else {
-        console.error("Sign-in failed");
-        // Call init if needed...
+        const errorText = await response.text();
+        console.error("Sign-in failed. Server response:", errorText);
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
-      // Call init if needed...
     }
   };
-
+  
   return (
     <>
       {/* Header */}
