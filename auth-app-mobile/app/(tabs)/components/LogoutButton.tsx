@@ -18,6 +18,8 @@ const LogoutButton = () => {
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 8,
+        width: "25%",
+        alignSelf: "center",
       }}
       labelStyle={{
         fontSize: 16,
