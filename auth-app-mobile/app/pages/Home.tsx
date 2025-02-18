@@ -145,6 +145,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#FFFFFF", // Ensure title is visible
     fontWeight: "bold",
+    fontSize: 32,
+    alignSelf: "center",
   },
   scrollContainer: {
     flexGrow: 1,
