@@ -6,8 +6,7 @@ export default function SignIn() {
   const router = useRouter();
 
   return (
-    <View>
       <SignInPage/>
-    </View>
+
   );
 }
